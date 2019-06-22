@@ -9,11 +9,11 @@ export default class Game extends Component {
         super();
         this._score = 0;
         this._round = 0;
+        this._failed = false;
 
         this.state = {
             score: 0,
-            round: 0,
-            failed: false
+            round: 0
         };
     }
 
@@ -28,26 +28,29 @@ export default class Game extends Component {
 
     onGameUpdate () {
 
-        if (!this.state.failed) {
+        if (!this._failed && this._roundFinished) {
 
+            this._roundFinished = false;
             this._round++;
             this.setState({
                 round: this._round
             }, this.startGame.bind(this));
+        } else {
+            this._failed = true;
         }
     }
 
-    onPress (succesfull) {
+    onPress (successful) {
 
-        if (succesfull) {
+        this._roundFinished = true;
+
+        if (successful && !this._failed) {
             this._score++;
             this.setState({
                 score: this._score
             });
         } else {
-            this.setState({
-                failed: true
-            })
+            this._failed = true;
         }
     }
 
