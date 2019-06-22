@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {View} from 'react-native';
 import Block from '../block/index';
 import styles from '../gamefield/style';
 
 export default class GameField extends Component<props> {
-    
+
     colorsValues = {
         RED: '#ba2828',
         BLUE: '#2860ba',
@@ -18,8 +18,9 @@ export default class GameField extends Component<props> {
         'RED', 'BLUE', 'GREEN', 'YELLOW', 'PINK', 'PURPLE'
     ];
 
-    onButtonPress (e) {
+    onButtonPress (block, event) {
 
+        this.props.onPress(block.color === this._oddColor);
     }
 
     shuffle (a) {
@@ -30,10 +31,15 @@ export default class GameField extends Component<props> {
         return a;
     }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+
+        return nextProps.round !== this.props.round;
+    }
+
     generateButtons () {
-        const length = 5;
-        let i, max = 5, min = 0, output = [], colors = [...this.colorsBase],
-            oddColor = colors.splice([Math.floor(Math.random() * (max - min + 1)) + min], 1);
+        const length = 5, max = 5, min = 0;
+        let i, output = [], colors = [...this.colorsBase],
+            oddColor = (colors.splice([Math.floor(Math.random() * (max - min + 1)) + min], 1))[0];
 
         // Generate all pairs.
         for (i = 0; i < length; i++) {
@@ -55,6 +61,8 @@ export default class GameField extends Component<props> {
             colorCode: this.colorsValues[oddColor],
             key: Math.random()
         });
+
+        this._oddColor = oddColor;
 
         return this.shuffle(output);
     }

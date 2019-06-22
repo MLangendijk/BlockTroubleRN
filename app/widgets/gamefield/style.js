@@ -4,6 +4,6 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
     }
 })
