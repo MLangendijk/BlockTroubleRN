@@ -1,5 +1,7 @@
 import GameField from '../gamefield/index';
 import ScoreField from '../scorefield/index';
+import BeginGame from '../messages/begingame';
+import EndGame from '../messages/endgame';
 import React, {Component} from 'react';
 import {View} from 'react-native';
 
@@ -13,20 +15,54 @@ export default class Game extends Component {
 
         this.state = {
             score: 0,
-            round: 0
+            round: 0,
+            beginGameVisible: true,
+            endGameVisible: false
         };
     }
 
-    componentDidMount() {
-        this.startGame();
+    startRound () {
+        let timeout = this.getTimeoutForRound();
+
+        setTimeout(this.onRoundEnd.bind(this), timeout);
     }
 
-    startGame () {
-
-        setTimeout(this.onGameUpdate.bind(this), 3000);
+    beginGame () {
+        this.setState({
+            beginGameVisible: false
+        }, this.startRound.bind(this));
     }
 
-    onGameUpdate () {
+    restartGame () {
+        this._round = 0;
+        this._score = 0;
+        this._failed = false;
+
+        this.setState({
+            endGameVisible: false,
+            beginGameVisible: true,
+            score: 0,
+            round: 0
+        })
+    }
+
+    getTimeoutForRound () {
+        let timeout = 3000;
+
+        if (this._round > 100) {
+            timeout -= this._round;
+        } else if (this._round > 50) {
+            timeout -= (this._round / 2)
+        } else if (this._round >= 25) {
+            timeout -= (this._round / 3);
+        } else if (this._round >= 10) {
+            timeout -= (this._round / 4);
+        }
+
+        return timeout;
+    }
+
+    onRoundEnd () {
 
         if (!this._failed && this._roundFinished) {
 
@@ -34,9 +70,13 @@ export default class Game extends Component {
             this._round++;
             this.setState({
                 round: this._round
-            }, this.startGame.bind(this));
+            }, this.startRound.bind(this));
         } else {
             this._failed = true;
+
+            this.setState({
+                endGameVisible: true
+            });
         }
     }
 
@@ -58,8 +98,12 @@ export default class Game extends Component {
 
         return (
             <View style={{flex: 1}}>
-                <ScoreField score={this.state.score}/>
-                <GameField onPress={this.onPress.bind(this)} round={this.state.round}/>
+                <View style={{flex: 1}}>
+                    <ScoreField score={this.state.score}/>
+                    <GameField onPress={this.onPress.bind(this)} round={this.state.round}/>
+                </View>
+                {this.state.beginGameVisible === true ? <BeginGame callback={this.beginGame.bind(this)}/> : null}
+                {this.state.endGameVisible === true ? <EndGame callback={this.restartGame.bind(this)} /> : null}
             </View>
         )
     }
