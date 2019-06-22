@@ -4,20 +4,18 @@ import Block from '../block/index';
 import styles from '../gamefield/style';
 
 export default class GameField extends Component<props> {
-
-    constructor () {
-        super();
-    }
+    
     colorsValues = {
         RED: '#ba2828',
         BLUE: '#2860ba',
         GREEN: '#2cba28',
         YELLOW: '#f4f11d',
-        PINK: '#f41cf4'
+        PINK: '#f41cf4',
+        PURPLE: '#8302F4'
     };
 
     colorsBase = [
-        'RED', 'BLUE', 'GREEN', 'YELLOW', 'PINK'
+        'RED', 'BLUE', 'GREEN', 'YELLOW', 'PINK', 'PURPLE'
     ];
 
     onButtonPress (e) {
@@ -33,20 +31,22 @@ export default class GameField extends Component<props> {
     }
 
     generateButtons () {
-        const length = 4;
-        let i, output = [], colors = [...this.colorsBase], oddColor = colors.splice([Math.random(0, 4)], 1);
+        const length = 5;
+        let i, max = 5, min = 0, output = [], colors = [...this.colorsBase],
+            oddColor = colors.splice([Math.floor(Math.random() * (max - min + 1)) + min], 1);
 
         // Generate all pairs.
         for (i = 0; i < length; i++) {
-            output.push({
-                color: colors[i],
-                colorCode: this.colorsValues[colors[i]],
-                key: Math.random()
-            }, {
-                color: colors[i],
-                colorCode: this.colorsValues[colors[i]],
-                key: Math.random()
-            });
+            const color = colors[i];
+            const colorValue = this.colorsValues[colors[i]];
+
+            for (let j = 0, l = 3; j < l; j++) {
+                output.push({
+                    color: color,
+                    colorCode: colorValue,
+                    key: Math.random()
+                });
+            }
         }
 
         // Generate odd color.

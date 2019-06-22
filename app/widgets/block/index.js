@@ -12,8 +12,8 @@ export default class Block extends Component<props> {
 
         this.style = StyleSheet.create({
             container: {
-                height: Dimensions.get('window').height / 3,
-                width: Dimensions.get('window').width / 3,
+                height: (Dimensions.get('window').height / 4),
+                width: (Dimensions.get('window').width / 4),
                 backgroundColor: props.colorCode
             }
         });
